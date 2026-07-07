@@ -31,17 +31,17 @@ Cadrer précisément le sujet, valider la tâche MVP, collecter les premières v
 
 ## 1. Cadrage du projet
 
-- [ ] Valider définitivement l’idée principale : assistant IA pour gestes de cuisine
-- [ ] Préparer un document de suivi du stage
+- [x] Valider définitivement l’idée principale : assistant IA pour gestes de cuisine
+- [x] Préparer un document de suivi du stage
 
 ## 2. Recherche de vidéos
 
-- [ ] Chercher des vidéos avec le mot-clé `how to dice an onion`
-- [ ] Chercher des vidéos avec le mot-clé `knife skills dice onion`
-- [ ] Chercher des vidéos avec le mot-clé `how to chop an onion`
-- [ ] Chercher des vidéos avec le mot-clé `how to cut onion step by step`
-- [ ] Chercher des vidéos en français avec `comment couper un oignon en dés`
-- [ ] Sauvegarder les liens des vidéos retenues
+- [x] Chercher des vidéos avec le mot-clé `how to dice an onion`
+- [x] Chercher des vidéos avec le mot-clé `knife skills dice onion`
+- [x] Chercher des vidéos avec le mot-clé `how to chop an onion`
+- [x] Chercher des vidéos avec le mot-clé `how to cut onion step by step`
+- [x] Chercher des vidéos en français avec `comment couper un oignon en dés`
+- [x] Sauvegarder les liens des vidéos retenues
 
 ## 3. Collecte du dataset
 
