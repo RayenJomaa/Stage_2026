@@ -1,11 +1,10 @@
-# Planning complet du stage — 2 mois
+# Planning actualisé du stage — 2 mois
 
 ## Projet : CookMotion AI
 
-**Sujet :** Assistant IA pour la reconnaissance de gestes culinaires à partir de vidéos  
-**Tâche MVP :** Couper un oignon en dés  
-**Durée :** 8 semaines  
-**Technologies principales :** Python, OpenCV, MediaPipe, Machine Learning, Streamlit  
+**Sujet :** Assistant IA pour la reconnaissance de tâches culinaires à partir de vidéos  
+**Cas d’usage principal :** reconnaissance de gestes culinaires dans des vidéos, avec un focus initial sur la tâche « couper un oignon »  
+**Technologies principales :** Python, OpenCV, PyTorch, Hugging Face, EPIC-KITCHENS, VideoMAE, Google Colab, GitHub, Streamlit
 
 ---
 
@@ -13,582 +12,382 @@
 
 Développer un prototype capable de :
 
-- analyser une vidéo d’une tâche culinaire ;
-- suivre les mouvements des mains avec MediaPipe ;
-- reconnaître les différentes étapes de la tâche ;
-- détecter les erreurs ou étapes manquantes ;
-- afficher les résultats dans une interface graphique.
+- analyser des vidéos de tâches culinaires ;
+- tester plusieurs modèles IA de reconnaissance d’actions ;
+- générer des vidéos annotées avec les actions prédites et les scores associés ;
+- comparer les performances des modèles testés ;
+- identifier les limites actuelles des modèles pré-entraînés ;
+- préparer une stratégie de fine-tuning sur un volume plus important de vidéos ;
+- présenter une piste technique claire et évolutive à l’encadrant.
 
-> Priorité : finaliser correctement une seule tâche, **couper un oignon en dés**, avant de passer à d’autres tâches.
+> Priorité actuelle : mettre en place un pipeline fonctionnel basé sur des modèles existants, produire des résultats visuels exploitables, puis améliorer progressivement les performances par fine-tuning.
 
 ---
 
-# Semaine 1 — Cadrage du projet et collecte des vidéos
+
+Deux pistes principales sont donc retenues :
+
+1. **Modèle EPIC-KITCHENS officiel**  
+   Modèle de reconnaissance d’actions basé sur EPIC-KITCHENS, capable de prédire un couple verbe / objet.
+
+2. **Modèle Hugging Face basé sur VideoMAE / HD-EPIC**  
+   Modèle vidéo pré-entraîné ou fine-tuné sur des actions culinaires, testé sur des clips courts avec génération d’une vidéo annotée.
+
+---
+
+# Semaine 1 — Cadrage du projet et recherche des modèles existants
 
 ## Objectif de la semaine
 
-Cadrer précisément le sujet, valider la tâche MVP, collecter les premières vidéos et organiser le projet.
+Cadrer le sujet, définir le cas d’usage, identifier les datasets et rechercher les modèles IA existants adaptés aux gestes culinaires.
 
 ## 1. Cadrage du projet
 
-- [x] Valider définitivement l’idée principale : assistant IA pour gestes de cuisine
+- [x] Valider l’idée principale : reconnaissance de tâches culinaires à partir de vidéos
+- [x] Définir le cas d’usage initial : tâches autour de la cuisine, notamment couper un oignon
+- [x] Clarifier que l’objectif n’est pas de créer immédiatement un modèle from scratch
+- [x] Définir une approche progressive : modèle pré-entraîné → test → annotation vidéo → comparaison → fine-tuning
 - [x] Préparer un document de suivi du stage
 
-## 2. Recherche de vidéos
+## 2. Recherche de datasets et ressources
 
-- [x] Chercher des vidéos avec le mot-clé `how to dice an onion`
-- [x] Chercher des vidéos avec le mot-clé `knife skills dice onion`
-- [x] Chercher des vidéos avec le mot-clé `how to chop an onion`
-- [x] Chercher des vidéos avec le mot-clé `how to cut onion step by step`
-- [x] Chercher des vidéos en français avec `comment couper un oignon en dés`
-- [x] Sauvegarder les liens des vidéos retenues
+- [x] Identifier EPIC-KITCHENS comme dataset principal lié aux actions culinaires
+- [x] Étudier les vidéos labelisées disponibles
+- [x] Comprendre la structure des annotations : verbes, noms/objets, actions
+- [x] Identifier les contraintes de stockage liées aux vidéos
+- [x] Identifier la nécessité de filtrer les vidéos selon leur durée
 
-## 3. Collecte du dataset
+## 3. Recherche de modèles existants
 
-- [ ] Collecter au minimum 20 vidéos exploitables
-- [ ] Viser idéalement 30 à 40 vidéos
-- [ ] Classer les vidéos selon leur qualité
-- [ ] Identifier les vidéos de type expert
-- [ ] Identifier les vidéos de type débutant ou amateur
-- [ ] Garder quelques vidéos à part pour les tests finaux
-- [ ] Filmer quelques vidéos internes si les vidéos publiques ne suffisent pas
+- [x] Rechercher des modèles déjà entraînés sur EPIC-KITCHENS
+- [x] Identifier les modèles officiels EPIC-KITCHENS disponibles
+- [x] Identifier une piste Hugging Face basée sur VideoMAE / HD-EPIC
+- [x] Vérifier les limites d’accessibilité du pipeline complet Hugging Face
+- [x] Choisir deux pistes à tester en priorité
 
 ## 4. Organisation du projet
 
-- [ ] Créer le dossier principal `CookingGestureAI`
-- [ ] Créer le dossier `data/raw_videos`
-- [ ] Créer le dossier `data/processed_videos`
-- [ ] Créer le dossier `data/annotations`
-- [ ] Créer le dossier `data/landmarks`
-- [ ] Créer le dossier `data/splits`
-- [ ] Créer le dossier `models`
-- [ ] Créer le dossier `outputs`
-- [ ] Créer le dossier `src`
-- [ ] Créer le dossier `app`
-- [ ] Créer le dossier `notebooks`
-- [ ] Créer le fichier `README.md`
-- [ ] Créer le fichier `requirements.txt`
+- [x] Créer ou mettre à jour le dépôt GitHub
+- [x] Préparer une structure de projet claire
+- [x] Ajouter les notebooks de test
+- [x] Ajouter les scripts utiles
+- [x] Ajouter les premiers résultats d’inférence
+- [x] Mettre à jour le README progressivement
 
-## 5. Fichier de suivi dataset
-
-Créer un fichier `dataset.csv` avec les colonnes suivantes :
-
-- [ ] `video_id`
-- [ ] `filename`
-- [ ] `path`
-- [ ] `source`
-- [ ] `url`
-- [ ] `duration`
-- [ ] `fps`
-- [ ] `resolution`
-- [ ] `view_angle`
-- [ ] `quality`
-- [ ] `status`
-- [ ] `comment`
-
-## Livrables de la semaine 1
-
-- [ ] Sujet bien cadré
-- [ ] Tâche MVP validée
-- [ ] Premier dataset collecté
-- [ ] Structure du projet créée
-- [ ] Fichier `dataset.csv` créé
-- [ ] Liste des vidéos sources préparée
 
 ---
 
-# Semaine 2 — Nettoyage vidéo et définition des labels
+# Semaine 2 — Préparation des vidéos et environnement d’expérimentation
 
 ## Objectif de la semaine
 
-Nettoyer les vidéos, standardiser les fichiers et définir précisément les étapes à reconnaître.
+Préparer l’environnement de travail, organiser les vidéos et rendre les tests reproductibles sur Google Colab et localement.
 
-## 1. Prétraitement des vidéos
+## 1. Préparation des vidéos
 
-- [ ] Supprimer les introductions inutiles
-- [ ] Supprimer les parties où il n’y a pas d’action
-- [ ] Garder uniquement la partie utile de la tâche
-- [ ] Couper les vidéos trop longues
-- [ ] Standardiser le format en `.mp4`
-- [ ] Standardiser la résolution
-- [ ] Standardiser le FPS
-- [ ] Vérifier que chaque vidéo est lisible
-- [ ] Sauvegarder les vidéos nettoyées dans `data/processed_videos`
+- [x] Télécharger des vidéos labelisées courtes issues d’EPIC-KITCHENS
+- [x] Filtrer les vidéos selon leur durée
+- [x] Garder en priorité les vidéos de moins de 15 minutes
+- [ ] Préparer aussi un sous-ensemble de vidéos de moins de 5 minutes
+- [ ] Séparer les vidéos de test rapide et les vidéos destinées au fine-tuning
+- [ ] Vérifier que les vidéos sont lisibles
+- [ ] Convertir les vidéos problématiques si nécessaire
 
-## 2. Paramètres recommandés
 
-- [ ] Résolution choisie : `640x480` ou `720p`
-- [ ] FPS choisi : `15` ou `30`
-- [ ] Format choisi : `.mp4`
-- [ ] Nommer chaque vidéo proprement
 
-Exemple :
+## 2. Préparation de Google Colab
 
-```text
-onion_001_expert_topview.mp4
-onion_002_expert_frontview.mp4
-onion_003_beginner_internal.mp4
-```
+- [x] Activer l’utilisation du GPU
+- [x] Installer PyTorch, OpenCV et les dépendances nécessaires
+- [x] Tester la lecture vidéo avec OpenCV
+- [x] Tester l’extraction de frames
+- [x] Préparer un notebook propre pour chaque modèle
 
-## 3. Définition des labels
+## 3. Découpage des vidéos
 
-Version MVP recommandée :
+- [x] Découper les vidéos longues en clips courts
+- [x] Tester des fenêtres de 5 secondes
+- [ ] Comparer avec des fenêtres de 2 ou 3 secondes
+- [ ] Sauvegarder les clips générés
+- [ ] Associer chaque clip à sa vidéo source
 
-- [ ] `idle`
-- [ ] `preparation`
-- [ ] `peeling`
-- [ ] `cut_in_half`
-- [ ] `hand_positioning`
-- [ ] `cutting`
-- [ ] `finish`
-
-Version détaillée possible plus tard :
-
-- [ ] `prepare_workspace`
-- [ ] `cut_ends`
-- [ ] `peel_onion`
-- [ ] `cut_in_half`
-- [ ] `position_hand`
-- [ ] `vertical_cuts`
-- [ ] `horizontal_cuts`
-- [ ] `dice_onion`
-- [ ] `finish`
-
-## 4. Validation des labels
-
-- [ ] Vérifier que chaque label correspond à une étape claire
-- [ ] Éviter les labels trop proches entre eux
-- [ ] Éviter trop de labels au début
-- [ ] Valider les labels avec l’encadrant
-- [ ] Créer un fichier `label_map.json`
-
-Exemple :
-
-```json
-{
-  "idle": 0,
-  "preparation": 1,
-  "peeling": 2,
-  "cut_in_half": 3,
-  "hand_positioning": 4,
-  "cutting": 5,
-  "finish": 6
-}
-```
-
-## 5. Préparation du labelling temporel
-
-- [ ] Choisir la méthode de labellisation
-- [ ] Décider si le labelling sera fait avec CSV manuel
-- [ ] Préparer le fichier `video_segments.csv`
-- [ ] Tester le labelling sur 2 ou 3 vidéos
-- [ ] Corriger les labels si nécessaire
-
-## Livrables de la semaine 2
-
-- [ ] Vidéos nettoyées
-- [ ] Résolution et FPS standardisés
-- [ ] Liste finale des labels
-- [ ] Fichier `label_map.json`
-- [ ] Début du fichier `video_segments.csv`
-- [ ] Première validation des labels
 
 ---
 
-# Semaine 3 — Labellisation temporelle et extraction MediaPipe
+# Semaine 3 — Test du modèle EPIC-KITCHENS officiel
 
 ## Objectif de la semaine
 
-Labelliser les vidéos et extraire les landmarks des mains avec MediaPipe.
-
-## 1. Labellisation temporelle
-
-- [ ] Regarder chaque vidéo nettoyée
-- [ ] Identifier le début de chaque action
-- [ ] Identifier la fin de chaque action
-- [ ] Associer chaque segment à un label
-- [ ] Remplir le fichier `video_segments.csv`
-- [ ] Vérifier qu’il n’y a pas de chevauchement incohérent
-- [ ] Vérifier qu’aucune partie utile n’est oubliée
-- [ ] Ajouter le label `idle` pour les moments inutiles si nécessaire
-
-Format recommandé :
-
-```csv
-video_id,start_time,end_time,label
-onion_001,0.00,4.20,preparation
-onion_001,4.20,10.50,peeling
-onion_001,10.50,18.00,cut_in_half
-onion_001,18.00,35.00,cutting
-onion_001,35.00,40.00,finish
-```
-
-## 2. Objectif de labellisation
-
-- [ ] Labelliser au minimum 10 vidéos
-- [ ] Viser 20 vidéos labellisées si possible
-- [ ] Garder quelques vidéos non labellisées pour les tests finaux
-- [ ] Revoir les vidéos difficiles
-- [ ] Supprimer les vidéos impossibles à labelliser proprement
-
-## 3. Installation de l’environnement
-
-- [ ] Créer un environnement virtuel Python
-- [ ] Installer OpenCV
-- [ ] Installer MediaPipe
-- [ ] Installer NumPy
-- [ ] Installer Pandas
-- [ ] Installer Scikit-learn
-- [ ] Installer Matplotlib
-- [ ] Installer Streamlit
-- [ ] Mettre à jour `requirements.txt`
-- [ ] Tester l’environnement avec une vidéo simple
-
-## 4. Extraction MediaPipe
-
-- [ ] Lire chaque vidéo frame par frame
-- [ ] Appliquer MediaPipe Hands
-- [ ] Extraire les 21 points de chaque main
-- [ ] Sauvegarder les coordonnées `x`, `y`, `z`
-- [ ] Identifier main gauche et main droite
-- [ ] Associer chaque frame au label correspondant
-- [ ] Sauvegarder les résultats en CSV
-- [ ] Sauvegarder aussi en NumPy si nécessaire
-
-## 5. Vérification visuelle
-
-- [ ] Afficher quelques frames avec landmarks
-- [ ] Vérifier que les mains sont bien détectées
-- [ ] Vérifier si les mains disparaissent souvent
-- [ ] Calculer le pourcentage de frames avec détection
-- [ ] Identifier les vidéos problématiques
-- [ ] Supprimer ou corriger les vidéos de mauvaise qualité
-
-## Livrables de la semaine 3
-
-- [ ] Fichier `video_segments.csv` rempli
-- [ ] Script d’extraction MediaPipe
-- [ ] Fichiers landmarks générés
-- [ ] Premières visualisations MediaPipe
-- [ ] Rapport simple sur la qualité de détection
-
----
-
-# Semaine 4 — Nettoyage des données et premier modèle
-
-## Objectif de la semaine
-
-Préparer les données pour l’apprentissage et entraîner un premier modèle simple.
-
-## 1. Nettoyage des landmarks
-
-- [ ] Charger les fichiers de landmarks
-- [ ] Vérifier les valeurs manquantes
-- [ ] Remplir les frames sans détection
-- [ ] Supprimer les séquences trop bruitées
-- [ ] Normaliser les coordonnées
-- [ ] Lisser les mouvements
-- [ ] Vérifier la cohérence main gauche / main droite
-- [ ] Sauvegarder les données nettoyées
-
-## 2. Normalisation
-
-- [ ] Tester une normalisation par rapport au poignet
-- [ ] Tester une normalisation par taille de la main
-- [ ] Vérifier que la position dans l’image influence moins le modèle
-- [ ] Comparer les résultats avant/après normalisation
-
-## 3. Création des séquences
-
-- [ ] Définir `window_size = 30 frames`
-- [ ] Définir `stride = 10 frames`
-- [ ] Créer des séquences de landmarks
-- [ ] Associer chaque séquence à un label
-- [ ] Sauvegarder `X` et `y`
-- [ ] Vérifier la forme des données
-
-Exemple attendu :
-
-```text
-X.shape = (nombre_sequences, 30, 126)
-y.shape = (nombre_sequences,)
-```
-
-## 4. Split train / validation / test
-
-- [ ] Séparer les données par vidéo
-- [ ] Ne pas mélanger les frames d’une même vidéo entre train et test
-- [ ] Créer `train.csv`
-- [ ] Créer `val.csv`
-- [ ] Créer `test.csv`
-- [ ] Appliquer une répartition 70 / 15 / 15
-- [ ] Vérifier que chaque label existe dans le train
-
-## 5. Premier modèle simple
-
-- [ ] Extraire des features statistiques simples
-- [ ] Tester Random Forest
-- [ ] Tester éventuellement SVM
-- [ ] Tester éventuellement XGBoost
-- [ ] Évaluer le modèle
-- [ ] Calculer l’accuracy
-- [ ] Calculer precision, recall, F1-score
-- [ ] Générer une matrice de confusion
-- [ ] Identifier les labels mal reconnus
-- [ ] Noter les premiers résultats
-
-## Livrables de la semaine 4
-
-- [ ] Données nettoyées
-- [ ] Séquences créées
-- [ ] Split train / validation / test
-- [ ] Premier modèle entraîné
-- [ ] Premiers résultats d’évaluation
-- [ ] Matrice de confusion
-
----
-
-# Semaine 5 — Modèle séquentiel et amélioration des prédictions
-
-## Objectif de la semaine
-
-Passer d’un modèle simple à un modèle capable de mieux gérer les séquences temporelles.
-
-## 1. Préparation pour LSTM / GRU
-
-- [ ] Charger les séquences au bon format
-- [ ] Vérifier la dimension des données
-- [ ] Encoder les labels
-- [ ] Préparer DataLoader si PyTorch est utilisé
-- [ ] Séparer train, validation et test proprement
-
-## 2. Modèle LSTM ou GRU
-
-- [ ] Implémenter un modèle LSTM
-- [ ] Tester un modèle GRU si nécessaire
-- [ ] Définir la fonction de perte
-- [ ] Définir l’optimiseur
-- [ ] Entraîner le modèle
-- [ ] Suivre la loss train
-- [ ] Suivre la loss validation
-- [ ] Suivre l’accuracy validation
-- [ ] Sauvegarder le meilleur modèle
-
-## 3. Comparaison des modèles
-
-- [ ] Comparer Random Forest avec LSTM
-- [ ] Comparer Random Forest avec GRU
-- [ ] Comparer accuracy
-- [ ] Comparer F1-score
-- [ ] Comparer matrice de confusion
-- [ ] Choisir le meilleur modèle pour la démo
-
-## 4. Post-processing
-
-- [ ] Ajouter un vote majoritaire sur les prédictions
-- [ ] Ajouter une durée minimale pour valider une étape
-- [ ] Ajouter des règles d’ordre logique
-- [ ] Supprimer les changements de labels trop rapides
-- [ ] Regrouper les prédictions en segments temporels
-- [ ] Générer une timeline propre
-
-Ordre logique recommandé :
-
-```text
-preparation -> peeling -> cut_in_half -> hand_positioning -> cutting -> finish
-```
-
-## 5. Détection d’erreurs
-
-- [ ] Détecter les étapes manquantes
-- [ ] Détecter les étapes dans le mauvais ordre
-- [ ] Détecter les actions non reconnues
-- [ ] Détecter une durée anormalement longue
-- [ ] Détecter une absence de main trop fréquente
-- [ ] Générer un feedback clair
-
-Messages possibles :
-
-```text
-Étape manquante : épluchage non détecté
-Ordre incorrect : découpe détectée avant coupe en deux
-Action non reconnue pendant plusieurs secondes
-Qualité vidéo insuffisante : mains peu visibles
-```
-
-## Livrables de la semaine 5
-
-- [ ] Modèle LSTM ou GRU entraîné
-- [ ] Comparaison avec modèle simple
-- [ ] Meilleur modèle sauvegardé
-- [ ] Post-processing fonctionnel
-- [ ] Premiers messages d’erreur générés
-- [ ] Timeline propre générée automatiquement
-
----
-
-# Semaine 6 — Interface graphique et visualisation
-
-## Objectif de la semaine
-
-Créer une interface simple pour tester le système facilement et montrer les résultats à l’encadrant.
-
-## 1. Création de l’interface Streamlit
-
-- [ ] Créer le fichier principal `app.py`
-- [ ] Créer une page d’accueil
-- [ ] Ajouter une description du projet
-- [ ] Ajouter un bouton upload vidéo
-- [ ] Ajouter un bouton analyser
-- [ ] Afficher la vidéo originale
-- [ ] Lancer l’extraction MediaPipe depuis l’interface
-- [ ] Lancer l’inférence depuis l’interface
-
-## 2. Affichage des résultats
-
-- [ ] Afficher le nom de la vidéo
-- [ ] Afficher la durée de la vidéo
-- [ ] Afficher les étapes détectées
-- [ ] Afficher la durée de chaque étape
-- [ ] Afficher les étapes manquantes
-- [ ] Afficher l’ordre des étapes
-- [ ] Afficher les erreurs détectées
-- [ ] Afficher le score global
-- [ ] Afficher le feedback final
-
-## 3. Timeline visuelle
-
-- [ ] Générer une timeline des étapes
-- [ ] Afficher les segments temporels
-- [ ] Afficher les labels prédits
-- [ ] Afficher les durées
-- [ ] Rendre la timeline lisible et simple
-
-Exemple :
-
-```text
-0s ─── 5s ─── 12s ─── 20s ─── 35s ─── 45s
-Préparation | Épluchage | Coupe en deux | Découpe | Fin
-```
+Tester un premier modèle officiel lié à EPIC-KITCHENS et produire une vidéo annotée avec les prédictions.
+
+## 1. Chargement du modèle
+
+- [] Charger le modèle officiel EPIC-KITCHENS via PyTorch Hub
+- [] Vérifier que le modèle fonctionne sur Colab
+- [] Charger les classes de verbes
+- [] Charger les classes de noms / objets
+- [] Vérifier la sortie du modèle
+
+## 2. Inférence sur une vidéo
+
+- [] Extraire les frames nécessaires
+- [] Préparer le tenseur d’entrée
+- [] Lancer une prédiction sur une vidéo courte
+- [] Afficher les meilleurs verbes prédits
+- [] Afficher les meilleurs objets prédits
+- [] Interpréter le couple verbe / objet
+
+## 3. Inférence par segments
+
+- [] Découper une vidéo en segments de quelques secondes
+- [] Lancer la prédiction sur chaque segment
+- [] Sauvegarder les résultats dans un CSV
+- [] Afficher les scores de prédiction
+- [] Identifier les segments mal reconnus
 
 ## 4. Vidéo annotée
 
-- [ ] Dessiner les landmarks sur chaque frame
-- [ ] Afficher le label courant sur la vidéo
-- [ ] Afficher le temps courant
-- [ ] Générer une vidéo annotée
-- [ ] Sauvegarder la vidéo annotée dans `outputs/demo_videos`
-- [ ] Permettre le téléchargement de la vidéo annotée
+- [] Générer une vidéo annotée avec :
+  - action prédite ;
+  - verbe ;
+  - score du verbe ;
+  - objet ;
+  - score de l’objet.
+- [] Visualiser la vidéo annotée dans Colab
+- [] Télécharger la vidéo annotée
+- [] Conserver cette vidéo comme première preuve de concept
 
-## 5. Dashboard simple
+## 5. Analyse des résultats
 
-- [ ] Afficher le score de complétion
-- [ ] Afficher le score d’ordre
-- [ ] Afficher le score de stabilité
-- [ ] Afficher le score global
-- [ ] Afficher le nombre d’étapes réussies
-- [ ] Afficher le nombre d’erreurs
-- [ ] Ajouter un résumé final clair
+- [] Constater que les résultats ne sont pas encore totalement satisfaisants
+- [] Identifier les raisons possibles :
+  - modèle pas parfaitement adapté aux vidéos testées ;
+  - clips parfois trop longs ou trop courts ;
+  - différence entre dataset d’entraînement et vidéos utilisées ;
+  - actions culinaires visuellement proches ;
+  - manque de fine-tuning spécifique.
 
-## Livrables de la semaine 6
-
-- [ ] Interface Streamlit fonctionnelle
-- [ ] Upload vidéo fonctionnel
-- [ ] Analyse vidéo fonctionnelle
-- [ ] Timeline affichée
-- [ ] Feedback affiché
-- [ ] Vidéo annotée générée
-- [ ] Première démo utilisable
 
 ---
 
-# Semaine 7 — Tests, correction et stabilisation
+# Semaine 4 — Test du modèle Hugging Face VideoMAE / HD-EPIC
 
 ## Objectif de la semaine
 
-Tester le système dans plusieurs conditions et corriger les problèmes avant la livraison finale.
+Tester un second modèle pré-entraîné disponible sur Hugging Face et comparer ses résultats avec le modèle EPIC-KITCHENS.
 
-## 1. Tests fonctionnels
+## 1. Étude du modèle Hugging Face
 
-- [ ] Tester avec une vidéo experte
-- [ ] Tester avec une vidéo interne correcte
-- [ ] Tester avec une vidéo contenant une erreur
-- [ ] Tester avec une vidéo où l’épluchage est absent
-- [ ] Tester avec une vidéo où l’ordre est incorrect
-- [ ] Tester avec une vidéo de mauvaise qualité
-- [ ] Tester plusieurs angles de caméra
-- [ ] Tester plusieurs personnes
-- [ ] Tester une vidéo jamais vue par le modèle
+- [] Identifier le modèle Hugging Face adapté aux actions culinaires
+- [] Vérifier les fichiers disponibles
+- [] Constater que le pipeline GitHub complet n’est pas accessible publiquement
+- [] Adapter la stratégie pour tester directement le checkpoint exploitable
+- [] Préparer un notebook Colab propre
 
-## 2. Analyse des erreurs
+## 2. Chargement du modèle
 
-- [ ] Identifier les labels souvent confondus
-- [ ] Identifier les vidéos qui posent problème
-- [ ] Identifier les cas où MediaPipe échoue
-- [ ] Identifier les erreurs du post-processing
-- [ ] Identifier les problèmes de l’interface
-- [ ] Noter toutes les limites du système
+- [] Installer les dépendances Hugging Face
+- [] Télécharger les poids du modèle
+- [] Charger ou reconstruire la partie nécessaire pour l’inférence
+- [] Vérifier la compatibilité avec Colab
+- [] Tester l’inférence sur un clip court
 
-## 3. Amélioration du modèle
+## 3. Inférence sur vidéo
 
-- [ ] Ajouter quelques vidéos si nécessaire
-- [ ] Corriger les labels douteux
-- [ ] Réentraîner le modèle
-- [ ] Ajuster les hyperparamètres
-- [ ] Ajuster la taille de fenêtre
-- [ ] Ajuster le stride
-- [ ] Comparer les nouvelles performances
+- [] Extraire 16 frames par clip
+- [] Lancer le modèle sur un segment vidéo
+- [] Récupérer les prédictions et scores
+- [] Appliquer l’inférence sur plusieurs segments
+- [] Sauvegarder les résultats dans un CSV
 
-## 4. Amélioration de l’interface
+## 4. Vidéo annotée
 
-- [ ] Corriger les bugs
-- [ ] Améliorer l’affichage des résultats
-- [ ] Améliorer la timeline
-- [ ] Améliorer les messages de feedback
-- [ ] Ajouter un résumé automatique
-- [ ] Ajouter un bouton pour exporter les résultats
-- [ ] Ajouter une meilleure gestion des erreurs
+- [] Générer une vidéo annotée avec les prédictions Hugging Face
+- [] Afficher le label prédit
+- [] Afficher les scores associés
+- [] Télécharger la vidéo annotée
+- [] Préparer cette vidéo comme deuxième preuve de concept
 
-## 5. Documentation technique
+## 5. Comparaison initiale
+
+- [] Comparer visuellement les deux vidéos annotées
+- [] Comparer la stabilité des prédictions
+- [] Comparer la pertinence des actions prédites
+- [] Identifier les limites des deux modèles
+- [] Préparer un message d’avancement à l’encadrant
+
+---
+
+# Semaine 5 — Analyse comparative et amélioration du pipeline
+
+## Objectif de la semaine
+
+Améliorer le pipeline d’inférence, analyser les résultats obtenus et préparer une base solide pour le fine-tuning.
+
+## 1. Analyse comparative des deux modèles
+
+- [ ] Comparer les prédictions segment par segment
+- [ ] Comparer les scores moyens
+- [ ] Identifier les actions souvent confondues
+- [ ] Identifier les segments où les deux modèles échouent
+- [ ] Identifier les segments où un modèle est meilleur que l’autre
+- [ ] Construire un tableau comparatif
+
+## 2. Amélioration du découpage vidéo
+
+- [ ] Tester plusieurs tailles de fenêtre : 2 s, 3 s, 5 s, 8 s
+- [ ] Tester différents strides
+- [ ] Vérifier l’impact du découpage sur les prédictions
+- [ ] Choisir une configuration stable pour la suite
+
+## 3. Amélioration des vidéos annotées
+
+- [ ] Ajouter les top-3 prédictions sur la vidéo
+- [ ] Ajouter le temps courant du segment
+- [ ] Ajouter une couleur ou un indicateur de confiance
+- [ ] Ajouter une timeline simple
+- [ ] Générer une sortie plus propre pour la démonstration
+
+## 4. Structuration des résultats
+
+- [ ] Sauvegarder tous les CSV de prédiction
+- [ ] Organiser les vidéos annotées
+- [ ] Ajouter une description des tests dans le README
+- [ ] Créer un dossier `experiments`
+- [ ] Documenter les commandes utilisées
+
+## 5. Préparation du fine-tuning
+
+- [ ] Identifier les classes prioritaires à améliorer
+- [ ] Sélectionner un sous-ensemble de vidéos EPIC-KITCHENS
+- [ ] Préparer un fichier de correspondance vidéo / label
+- [ ] Vérifier le format attendu par le modèle
+- [ ] Estimer le volume nécessaire de vidéos
+- [ ] Identifier les limites de stockage et de temps d’entraînement
+
+
+---
+
+# Semaine 6 — Fine-tuning progressif sur un sous-ensemble de vidéos
+
+## Objectif de la semaine
+
+Commencer l’adaptation du modèle sur un sous-ensemble réaliste de vidéos culinaires afin d’améliorer les prédictions.
+
+## 1. Préparation des données pour fine-tuning
+
+- [ ] Sélectionner les vidéos les plus exploitables
+- [ ] Préparer les clips d’entraînement
+- [ ] Associer chaque clip à son label
+- [ ] Vérifier l’équilibre entre les classes
+- [ ] Écarter les clips ambigus ou inutilisables
+- [ ] Créer les splits train / validation / test
+
+## 2. Choix de la stratégie de fine-tuning
+
+- [ ] Choisir le modèle à fine-tuner en priorité
+- [ ] Geler une partie du backbone si nécessaire
+- [ ] Adapter la tête de classification si nécessaire
+- [ ] Définir les hyperparamètres de départ
+- [ ] Définir une stratégie adaptée aux ressources Colab
+
+## 3. Premier fine-tuning léger
+
+- [ ] Lancer un premier entraînement sur un petit sous-ensemble
+- [ ] Suivre la loss d’entraînement
+- [ ] Suivre la loss de validation
+- [ ] Sauvegarder le meilleur checkpoint
+- [ ] Éviter le surapprentissage
+- [ ] Noter les limites rencontrées
+
+## 4. Évaluation
+
+- [ ] Tester le modèle fine-tuné sur des vidéos non vues
+- [ ] Comparer avec le modèle pré-entraîné non fine-tuné
+- [ ] Calculer accuracy, precision, recall et F1-score si les labels sont disponibles
+- [ ] Générer une matrice de confusion
+- [ ] Générer une nouvelle vidéo annotée
+
+## 5. Analyse des limites
+
+- [ ] Documenter les contraintes de stockage
+- [ ] Documenter les contraintes de temps d’entraînement
+- [ ] Documenter les limites du volume de données utilisé
+- [ ] Proposer une stratégie large scale pour la suite
+
+
+---
+
+# Semaine 7 — Interface de démonstration et documentation
+
+## Objectif de la semaine
+
+Créer une interface simple pour tester les vidéos et préparer une démonstration claire pour l’encadrant.
+
+## 1. Interface Streamlit
+
+- [ ] Créer une interface d’upload vidéo
+- [ ] Permettre le choix du modèle à utiliser
+- [ ] Ajouter un bouton d’analyse
+- [ ] Afficher la vidéo originale
+- [ ] Afficher la vidéo annotée
+- [ ] Afficher le tableau des prédictions
+- [ ] Permettre le téléchargement du CSV
+
+## 2. Affichage des résultats
+
+- [ ] Afficher les prédictions par segment
+- [ ] Afficher les scores de confiance
+- [ ] Afficher les top-3 prédictions
+- [ ] Afficher une timeline simple
+- [ ] Ajouter un résumé global de la vidéo
+- [ ] Ajouter une indication sur la fiabilité des résultats
+
+## 3. Comparaison intégrée
+
+- [ ] Ajouter un mode comparaison entre les deux modèles
+- [ ] Afficher les résultats EPIC-KITCHENS
+- [ ] Afficher les résultats Hugging Face
+- [ ] Montrer les différences principales
+- [ ] Permettre de télécharger les deux vidéos annotées
+
+## 4. Documentation technique
 
 - [ ] Rédiger le README
-- [ ] Expliquer comment installer le projet
-- [ ] Expliquer comment préparer les vidéos
-- [ ] Expliquer comment faire le labelling
-- [ ] Expliquer comment extraire les landmarks
-- [ ] Expliquer comment entraîner le modèle
-- [ ] Expliquer comment lancer l’interface
-- [ ] Décrire la structure du projet
-- [ ] Décrire les limites du système
+- [ ] Expliquer l’installation
+- [ ] Expliquer l’utilisation sur Colab
+- [ ] Expliquer comment lancer l’inférence
+- [ ] Expliquer comment générer une vidéo annotée
+- [ ] Expliquer les limites actuelles
+- [ ] Expliquer la stratégie de fine-tuning
 
-## Livrables de la semaine 7
+## 5. Préparation de la démonstration
 
-- [ ] Système testé sur plusieurs vidéos
-- [ ] Bugs principaux corrigés
-- [ ] Interface stabilisée
-- [ ] Modèle amélioré si nécessaire
-- [ ] README rédigé
-- [ ] Limites du système identifiées
+- [ ] Choisir 2 ou 3 vidéos représentatives
+- [ ] Préparer une vidéo annotée par modèle
+- [ ] Préparer un tableau comparatif
+- [ ] Préparer une explication simple des résultats
+- [ ] Préparer une partie sur les limites et perspectives
+
 
 ---
 
-# Semaine 8 — Finalisation, rapport et démonstration
+# Semaine 8 — Finalisation, rapport et soutenance
 
 ## Objectif de la semaine
 
-Finaliser tous les livrables, préparer la démonstration et rédiger le rapport final.
+Finaliser le prototype, organiser les livrables et préparer la présentation finale.
 
 ## 1. Finalisation technique
 
-- [ ] Nettoyer le code
+- [ ] Nettoyer les notebooks
 - [ ] Organiser les scripts
 - [ ] Supprimer les fichiers inutiles
-- [ ] Vérifier que le projet se lance correctement
+- [ ] Vérifier les chemins
+- [ ] Vérifier que les notebooks s’exécutent correctement
 - [ ] Vérifier que l’interface fonctionne
-- [ ] Vérifier que le modèle est bien chargé
-- [ ] Vérifier que les chemins sont corrects
-- [ ] Vérifier que les vidéos de démo fonctionnent
-- [ ] Préparer une version finale stable
+- [ ] Vérifier que les vidéos annotées sont disponibles
+- [ ] Préparer une version stable du projet
 
 ## 2. Rapport final
 
@@ -596,97 +395,85 @@ Inclure dans le rapport :
 
 - [ ] Contexte du projet
 - [ ] Objectif du stage
-- [ ] Choix de l’idée
-- [ ] Justification du choix de la cuisine
-- [ ] Justification du choix de la tâche “couper un oignon”
-- [ ] Description du dataset
-- [ ] Méthode de collecte des vidéos
-- [ ] Méthode de prétraitement
-- [ ] Méthode de labellisation
-- [ ] Extraction MediaPipe
-- [ ] Préparation des séquences
-- [ ] Modèles testés
+- [ ] Problématique
+- [ ] Changement d’approche
+- [ ] Justification du choix des modèles pré-entraînés
+- [ ] Description d’EPIC-KITCHENS
+- [ ] Description du modèle EPIC-KITCHENS officiel
+- [ ] Description du modèle Hugging Face / VideoMAE
+- [ ] Préparation des vidéos
+- [ ] Découpage en segments
+- [ ] Méthode d’inférence
+- [ ] Génération des vidéos annotées
 - [ ] Résultats obtenus
-- [ ] Post-processing
-- [ ] Détection d’erreurs
-- [ ] Interface graphique
-- [ ] Difficultés rencontrées
-- [ ] Limites du projet
-- [ ] Perspectives
+- [ ] Comparaison des modèles
+- [ ] Limites observées
+- [ ] Contraintes de stockage et d’entraînement
+- [ ] Fine-tuning réalisé ou planifié
+- [ ] Perspectives d’amélioration
 
 ## 3. Présentation finale
 
 Préparer des slides avec :
 
 - [ ] Titre du projet
-- [ ] Problématique
 - [ ] Objectif
-- [ ] Choix du cas d’usage
+- [ ] Ancienne approche vs nouvelle approche
 - [ ] Pipeline global
-- [ ] Dataset
-- [ ] Labellisation
-- [ ] MediaPipe
-- [ ] Modèle utilisé
-- [ ] Interface graphique
-- [ ] Résultats
-- [ ] Démo
+- [ ] Dataset utilisé
+- [ ] Modèle 1 : EPIC-KITCHENS
+- [ ] Modèle 2 : Hugging Face / VideoMAE
+- [ ] Démo vidéo annotée
+- [ ] Comparaison des résultats
 - [ ] Limites
-- [ ] Perspectives
+- [ ] Fine-tuning et perspectives
 - [ ] Conclusion
 
 ## 4. Démo finale
 
-Préparer au moins 3 scénarios :
+Préparer au minimum :
 
-- [ ] Vidéo experte reconnue correctement
-- [ ] Vidéo utilisateur correcte
-- [ ] Vidéo utilisateur avec étape manquante
-- [ ] Vidéo annotée avec landmarks
-- [ ] Timeline des étapes détectées
-- [ ] Feedback final
-- [ ] Score global
+- [ ] Une vidéo annotée avec le modèle EPIC-KITCHENS
+- [ ] Une vidéo annotée avec le modèle Hugging Face
+- [ ] Un tableau CSV des prédictions
+- [ ] Une interface ou un notebook de démonstration
+- [ ] Une explication claire des résultats non satisfaisants
+- [ ] Une proposition d’amélioration par fine-tuning large scale
 
 ## 5. Livraison finale
 
-- [ ] Dataset organisé
-- [ ] Vidéos brutes
-- [ ] Vidéos nettoyées
-- [ ] Annotations temporelles
-- [ ] Fichiers landmarks
-- [ ] Scripts de preprocessing
-- [ ] Scripts MediaPipe
-- [ ] Scripts d’entraînement
-- [ ] Modèle entraîné
-- [ ] Script d’inférence
-- [ ] Interface Streamlit
+- [ ] Code source
+- [ ] Notebooks Colab
+- [ ] Scripts d’inférence
 - [ ] Vidéos annotées
+- [ ] CSV des prédictions
+- [ ] README
 - [ ] Rapport final
 - [ ] Présentation finale
-- [ ] README
-- [ ] Démo prête à lancer
-
-## Livrables de la semaine 8
-
-- [ ] Code final propre
-- [ ] Interface finale fonctionnelle
-- [ ] Rapport final terminé
-- [ ] Présentation finale terminée
 - [ ] Démo prête
-- [ ] Tous les livrables organisés
+
 
 ---
 
-# Tableau récapitulatif des 8 semaines
+# Tableau récapitulatif actualisé des 8 semaines
 
 | Semaine | Objectif principal | Livrable principal |
 |---|---|---|
-| Semaine 1 | Cadrage, recherche et collecte de vidéos | Dataset brut + structure projet |
-| Semaine 2 | Nettoyage vidéo et définition des labels | Vidéos nettoyées + labels validés |
-| Semaine 3 | Labellisation et extraction MediaPipe | Annotations + landmarks |
-| Semaine 4 | Préparation données et premier modèle | Baseline ML + premiers résultats |
-| Semaine 5 | Modèle séquentiel et post-processing | Modèle LSTM/GRU + timeline |
-| Semaine 6 | Interface graphique | Application Streamlit |
-| Semaine 7 | Tests et stabilisation | Prototype corrigé + README |
-| Semaine 8 | Finalisation et livraison | Rapport + présentation + démo |
+| Semaine 1 | Cadrage et recherche de modèles existants | Approche validée + modèles identifiés |
+| Semaine 2 | Préparation vidéos et environnement Colab | Vidéos prêtes + notebooks de base |
+| Semaine 3 | Test du modèle EPIC-KITCHENS officiel | Vidéo annotée + CSV prédictions |
+| Semaine 4 | Test du modèle Hugging Face / VideoMAE | Deuxième vidéo annotée + comparaison initiale |
+| Semaine 5 | Analyse comparative et amélioration du pipeline | Tableau comparatif + pipeline amélioré |
+| Semaine 6 | Fine-tuning progressif | Premier modèle adapté + analyse avant/après |
+| Semaine 7 | Interface et documentation | Démo Streamlit + README |
+| Semaine 8 | Finalisation et présentation | Rapport + slides + démo finale |
 
 ---
+
+# Message clé à transmettre dans le rapport
+
+Les premiers résultats obtenus avec les modèles pré-entraînés ne sont pas encore totalement satisfaisants. Cependant, cette étape a permis de valider une piste technique complète : chargement de modèles vidéo, découpage des vidéos en segments, inférence automatique, génération de vidéos annotées et comparaison des prédictions.
+
+Les limites observées sont principalement liées à l’écart entre les vidéos utilisées et les données d’entraînement des modèles, au manque de fine-tuning spécifique, aux contraintes de stockage et au coût d’entraînement sur un grand volume de vidéos.
+
+La suite logique du projet consiste donc à fine-tuner le modèle le plus prometteur sur un plus grand volume de clips culinaires, tout en améliorant le découpage temporel, la qualité des annotations et la stabilité des prédictions.
